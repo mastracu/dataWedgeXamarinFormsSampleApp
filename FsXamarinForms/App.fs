@@ -53,8 +53,8 @@ type InventoryApp () as app =
     inherit Application ()
 
     let dwOutput dispatch = 
-        let statusUpdateAction dispatch = new System.Action<InventoryApp,string*string>(fun app arg -> dispatch (BarcodeUpdate arg) )
-        MessagingCenter.Subscribe<InventoryApp, string*string> (Xamarin.Forms.Application.Current, "DataWedgeOutput", statusUpdateAction dispatch)
+        let newBarcodeAction dispatch = new System.Action<InventoryApp,string*string>(fun app arg -> dispatch (BarcodeUpdate arg) )
+        MessagingCenter.Subscribe<InventoryApp, string*string> (Xamarin.Forms.Application.Current, "DataWedgeOutput", newBarcodeAction dispatch)
 
     let program = Program.mkProgram init update view
     let runner = 
