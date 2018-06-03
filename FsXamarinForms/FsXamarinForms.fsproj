@@ -9,6 +9,7 @@
     <Compile Include="AssemblyInfo.fs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Elmish.XamarinForms" Version="0.4.4" />
     <PackageReference Include="FSharp.Core" Version="4.3.3" />
     <PackageReference Include="Xamarin.Forms" Version="3.0.0.446417" />
   </ItemGroup>

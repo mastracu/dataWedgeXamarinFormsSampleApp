@@ -1,9 +1,10 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "FsXamarinForms.Droid", "Droid\FsXamarinForms.Droid.fsproj", "{EF9505F6-B3D3-4E12-BF1D-6A532C20199F}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsXamarinForms.Droid", "Droid\FsXamarinForms.Droid.fsproj", "{EF9505F6-B3D3-4E12-BF1D-6A532C20199F}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "FsXamarinForms", "FsXamarinForms\FsXamarinForms.fsproj", "{B91A53CA-827A-4815-9E1B-922BFBB28A83}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsXamarinForms", "FsXamarinForms\FsXamarinForms.fsproj", "{B91A53CA-827A-4815-9E1B-922BFBB28A83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,11 +14,18 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{EF9505F6-B3D3-4E12-BF1D-6A532C20199F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF9505F6-B3D3-4E12-BF1D-6A532C20199F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF9505F6-B3D3-4E12-BF1D-6A532C20199F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{EF9505F6-B3D3-4E12-BF1D-6A532C20199F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF9505F6-B3D3-4E12-BF1D-6A532C20199F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B91A53CA-827A-4815-9E1B-922BFBB28A83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B91A53CA-827A-4815-9E1B-922BFBB28A83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B91A53CA-827A-4815-9E1B-922BFBB28A83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B91A53CA-827A-4815-9E1B-922BFBB28A83}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5474E7F0-44E9-4E33-A0C0-F0B1FB7FBE39}
 	EndGlobalSection
 EndGlobal

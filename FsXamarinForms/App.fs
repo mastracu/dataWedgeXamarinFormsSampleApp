@@ -1,12 +1,65 @@
 ﻿namespace FsXamarinForms
 
+open Elmish.XamarinForms
+open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 
-type App() =
-    inherit Application()
 
-    let stack = StackLayout(VerticalOptions = LayoutOptions.Center)
-    let label = Label(XAlign = TextAlignment.Center, Text = "Welcome to F# Xamarin.Forms!")
-    do
-        stack.Children.Add(label)
-        base.MainPage <- ContentPage(Content = stack)
+module App = 
+
+    type Model = 
+      { Barcode : string option
+        Symbology: string option
+        Count: int
+      }
+
+    type Msg = 
+        | BarcodeUpdate of string * string
+        | Reset
+
+    //TODO: set InitModel based on current timing
+    let initModel = { Barcode = None; Symbology = None; Count = 0 }
+
+    let init () = initModel, Cmd.none
+
+    let update msg model =
+        match msg with
+        | BarcodeUpdate (bc, sym) -> { model with  Barcode = Some bc; Symbology = Some sym; Count = model.Count+1}, Cmd.none
+        | Reset -> initModel, Cmd.none  
+
+    let view (model: Model) dispatch =
+        Xaml.ContentPage(
+          content=Xaml.StackLayout(padding=20.0, spacing = 5.0,
+                  children=[
+                    Xaml.Label(text= "Scanned Barcode:", fontSize = "Large")
+                    Xaml.Entry(text= match model.Barcode with 
+                                            | None -> ""
+                                            | Some str -> str
+                        ,fontSize = "Large" )
+                    Xaml.Label(text= "Symbology:", fontSize = "Large")
+                    Xaml.Entry(text= match model.Symbology with 
+                                            | None -> ""
+                                            | Some str -> str
+                        , fontSize = "Large" )
+                    Xaml.Label(text= "Count:", fontSize = "Large")
+                    Xaml.Entry(text= string model.Count, fontSize = "Large" )
+                    Xaml.Button(text="Reset", command=fixf(fun () -> dispatch Reset))
+                  ]))
+
+open App
+
+
+type ClockApp () as app = 
+    inherit Application ()
+
+    let dwOutput dispatch = 
+        let statusUpdateAction dispatch = new System.Action<ClockApp,string*string>(fun app arg -> dispatch (BarcodeUpdate arg) )
+        MessagingCenter.Subscribe<ClockApp, string*string> (Xamarin.Forms.Application.Current, "DataWedgeOutput", statusUpdateAction dispatch)
+
+    let program = Program.mkProgram init update view
+    let runner = 
+        program
+        |> Program.withSubscription (fun _ -> Cmd.ofSub dwOutput)
+        |> Program.withConsoleTrace
+        |> Program.withDynamicView app
+        |> Program.run
