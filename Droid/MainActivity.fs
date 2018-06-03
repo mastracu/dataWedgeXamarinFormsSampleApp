@@ -4,9 +4,6 @@ open System
 open Android.App
 open Android.Content
 open Android.Content.PM
-open Android.Runtime
-open Android.Views
-open Android.Widget
 open Android.OS
 open Xamarin.Forms
 open Xamarin.Forms.Platform.Android
@@ -37,6 +34,7 @@ type bReceiver (func1: String -> String -> String -> Unit, func2: String-> Unit)
  ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
 type MainActivity() =
     inherit FormsAppCompatActivity()
+    let mutable barcodeBroadcastReceiver = Unchecked.defaultof<bReceiver>
 
     member this.sendBarcodeNotification a b c  = 
         this.RunOnUiThread (fun () -> MessagingCenter.Send<FsXamarinForms.InventoryApp, string*string>(
@@ -44,8 +42,6 @@ type MainActivity() =
                                         "DataWedgeOutput", (b,c)))
         Android.Util.Log.Info ("MessagingCenter", sprintf "notification: %s %s %s" a b c ) |> ignore
 
-
-    member this.barcodeBroadcastReceiver = new bReceiver( this.sendBarcodeNotification, fun _ -> ())
     
     override this.OnCreate (bundle: Bundle) =
         FormsAppCompatActivity.TabLayoutResource <- Resources.Layout.Tabbar
@@ -54,19 +50,15 @@ type MainActivity() =
         base.OnCreate (bundle)        
         Xamarin.Forms.Forms.Init (this, bundle)
         this.LoadApplication (new FsXamarinForms.InventoryApp ())
+        do barcodeBroadcastReceiver <- new bReceiver( this.sendBarcodeNotification, fun _ -> ())
 
-    // https://stackoverflow.com/questions/7887169/when-to-register-unregister-broadcast-receivers-created-in-an-activity
-
-    override this.OnResume () =
-        
-        base.OnResume ()
-
+    override this.OnStart () =
+        base.OnStart ()
         let filter = new IntentFilter "com.zebra.fsharp.ACTION"
         do filter.AddAction "com.symbol.datawedge.api.RESULT_ACTION"
         do filter.AddCategory "android.intent.category.DEFAULT"
-        do this.RegisterReceiver (this.barcodeBroadcastReceiver, filter) |> ignore
+        do this.RegisterReceiver (barcodeBroadcastReceiver, filter) |> ignore
 
-    override this.OnPause () =
-        
-        base.OnPause ()        
-        do this.UnregisterReceiver (this.barcodeBroadcastReceiver)
+    override this.OnStop () =
+        base.OnStop ()        
+        do this.UnregisterReceiver (barcodeBroadcastReceiver)        
