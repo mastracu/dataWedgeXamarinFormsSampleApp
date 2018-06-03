@@ -40,8 +40,6 @@ type MainActivity() =
         this.RunOnUiThread (fun () -> MessagingCenter.Send<FsXamarinForms.InventoryApp, string*string>(
                                         Xamarin.Forms.Application.Current :?> FsXamarinForms.InventoryApp, 
                                         "DataWedgeOutput", (b,c)))
-        Android.Util.Log.Info ("MessagingCenter", sprintf "notification: %s %s %s" a b c ) |> ignore
-
     
     override this.OnCreate (bundle: Bundle) =
         FormsAppCompatActivity.TabLayoutResource <- Resources.Layout.Tabbar
