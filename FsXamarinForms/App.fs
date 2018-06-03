@@ -49,12 +49,12 @@ module App =
 open App
 
 
-type ClockApp () as app = 
+type InventoryApp () as app = 
     inherit Application ()
 
     let dwOutput dispatch = 
-        let statusUpdateAction dispatch = new System.Action<ClockApp,string*string>(fun app arg -> dispatch (BarcodeUpdate arg) )
-        MessagingCenter.Subscribe<ClockApp, string*string> (Xamarin.Forms.Application.Current, "DataWedgeOutput", statusUpdateAction dispatch)
+        let statusUpdateAction dispatch = new System.Action<InventoryApp,string*string>(fun app arg -> dispatch (BarcodeUpdate arg) )
+        MessagingCenter.Subscribe<InventoryApp, string*string> (Xamarin.Forms.Application.Current, "DataWedgeOutput", statusUpdateAction dispatch)
 
     let program = Program.mkProgram init update view
     let runner = 

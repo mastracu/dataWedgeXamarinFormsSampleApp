@@ -33,13 +33,13 @@ type bReceiver (func1: String -> String -> String -> Unit, func2: String-> Unit)
             do ()
 
 
-[<Activity (Label = "FsXamarinForms.Droid", Icon = "@drawable/icon", Theme = "@style/MyTheme", MainLauncher = true, ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
+[<Activity (Label = "F#Inventory", Icon = "@drawable/icon", Theme = "@style/MyTheme", MainLauncher = true, ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
 type MainActivity() =
     inherit FormsAppCompatActivity()
 
     member this.sendBarcodeNotification a b c  = 
-        this.RunOnUiThread (fun () -> MessagingCenter.Send<FsXamarinForms.ClockApp, string*string>(
-                                        Xamarin.Forms.Application.Current :?> FsXamarinForms.ClockApp, 
+        this.RunOnUiThread (fun () -> MessagingCenter.Send<FsXamarinForms.InventoryApp, string*string>(
+                                        Xamarin.Forms.Application.Current :?> FsXamarinForms.InventoryApp, 
                                         "DataWedgeOutput", (b,c)))
         Android.Util.Log.Info ("MessagingCenter", sprintf "notification: %s %s %s" a b c ) |> ignore
 
@@ -59,5 +59,5 @@ type MainActivity() =
         
         Xamarin.Forms.Forms.Init (this, bundle)
 
-        this.LoadApplication (new FsXamarinForms.ClockApp ())
+        this.LoadApplication (new FsXamarinForms.InventoryApp ())
 
