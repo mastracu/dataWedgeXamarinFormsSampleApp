@@ -51,14 +51,22 @@ type MainActivity() =
         FormsAppCompatActivity.TabLayoutResource <- Resources.Layout.Tabbar
         FormsAppCompatActivity.ToolbarResource <- Resources.Layout.Toolbar
 
-        base.OnCreate (bundle)
+        base.OnCreate (bundle)        
+        Xamarin.Forms.Forms.Init (this, bundle)
+        this.LoadApplication (new FsXamarinForms.InventoryApp ())
+
+    // https://stackoverflow.com/questions/7887169/when-to-register-unregister-broadcast-receivers-created-in-an-activity
+
+    override this.OnResume () =
+        
+        base.OnResume ()
 
         let filter = new IntentFilter "com.zebra.fsharp.ACTION"
         do filter.AddAction "com.symbol.datawedge.api.RESULT_ACTION"
         do filter.AddCategory "android.intent.category.DEFAULT"
         do this.RegisterReceiver (this.barcodeBroadcastReceiver, filter) |> ignore
+
+    override this.OnPause () =
         
-        Xamarin.Forms.Forms.Init (this, bundle)
-
-        this.LoadApplication (new FsXamarinForms.InventoryApp ())
-
+        base.OnPause ()        
+        do this.UnregisterReceiver (this.barcodeBroadcastReceiver)
