@@ -17,7 +17,6 @@ module App =
         | BarcodeUpdate of string * string
         | Reset
 
-    //TODO: set InitModel based on current timing
     let initModel = { Barcode = None; Symbology = None; Count = 0 }
 
     let init () = initModel, Cmd.none
