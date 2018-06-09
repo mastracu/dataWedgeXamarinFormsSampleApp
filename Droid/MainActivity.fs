@@ -32,7 +32,7 @@ type bReceiver (func1: String -> String -> String -> Unit, func2: String-> Unit)
 
 
 [<Activity (Label = "F#Inventory", Icon = "@drawable/icon", Theme = "@style/MyTheme", MainLauncher = true, 
- ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
+ ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation), ScreenOrientation = ScreenOrientation.Portrait)>]
 type MainActivity() =
     inherit FormsAppCompatActivity()
     let mutable barcodeBroadcastReceiver = Unchecked.defaultof<bReceiver>
