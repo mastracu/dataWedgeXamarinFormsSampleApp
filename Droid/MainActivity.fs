@@ -13,7 +13,7 @@ open DWLiterals
 
 type Resources = FsXamarinForms.Droid.Resource
 
-type bReceiver (func1: String -> String -> String -> Unit, func2: String-> Unit) = 
+type bReceiver (func1, func2) = 
    inherit BroadcastReceiver()               
    override this.OnReceive (context, intent) =
       let action = intent.Action
@@ -23,10 +23,15 @@ type bReceiver (func1: String -> String -> String -> Unit, func2: String-> Unit)
             let decodedSource = b.GetString EXTRA_BARCODE_SOURCE
             let decodedData = b.GetString EXTRA_BARCODE_STRING
             let decodedLabelType = b.GetString EXTRA_LABEL_TYPE
-            func1 decodedSource decodedData decodedLabelType
+            func1 (decodedSource, decodedData, decodedLabelType)
       | ACTION_RESULT_DATAWEDGE ->
-            let activeProfile = b.GetString EXTRA_RESULT_GET_ACTIVE_PROFILE
-            func2 activeProfile
+            if intent.HasExtra EXTRA_RESULT_GET_ACTIVE_PROFILE then
+                let activeProfile = b.GetString EXTRA_RESULT_GET_ACTIVE_PROFILE
+                func2 (activeProfile)
+            else
+                ()
+            // let dwVersionInfo = b.GetBundle EXTRA_RESULT_GET_VERSION_INFO
+            // let dwVersion = dwVersionInfo.GetString ("DATAWEDGE")
       | _ ->
             do ()
 
@@ -41,15 +46,17 @@ type MainActivity() =
             let dw = new Intent ()
             do  dw.SetAction ACTION_DATAWEDGE |> ignore
             do  dw.PutExtra (EXTRA_GET_ACTIVE_PROFILE, "") |> ignore
+            do  dw.PutExtra (EXTRA_GET_VERSION_INFO, "") |> ignore
             do  this.SendBroadcast dw
 
-    member this.showActiveProfile (a:String) = 
+    member this.showActiveProfile (activeProfile) = 
        this.RunOnUiThread( fun() -> 
-          let barcodeToast = (Android.Widget.Toast.MakeText(this, "Active DW Profile: " + a, Android.Widget.ToastLength.Long))
+          let barcodeToast = (Android.Widget.Toast.MakeText(this, "Active DW Profile: " + activeProfile, 
+                                                                     Android.Widget.ToastLength.Long))
           do barcodeToast.Show() )
 
 
-    member this.sendBarcodeNotification a b c  = 
+    member this.sendBarcodeNotification (_, b, c)  = 
         this.RunOnUiThread (fun () -> MessagingCenter.Send<FsXamarinForms.InventoryApp, string*string>(
                                         Xamarin.Forms.Application.Current :?> FsXamarinForms.InventoryApp, 
                                         "DataWedgeOutput", (b,c)))
@@ -67,7 +74,8 @@ type MainActivity() =
 
     override this.OnStart () =
         base.OnStart ()
-        let filter = (new IntentFilter(ACTION_INTENT_PLUGIN))
+        let filter = new IntentFilter()
+        do filter.AddAction ACTION_INTENT_PLUGIN
         do filter.AddAction ACTION_RESULT_DATAWEDGE
         do filter.AddCategory "android.intent.category.DEFAULT"
         do this.RegisterReceiver (barcodeBroadcastReceiver, filter) |> ignore

@@ -25,7 +25,7 @@ let ACTION_RESULT_DATAWEDGE = "com.symbol.datawedge.api.RESULT_ACTION"
 
 //  6.3 API and up Extras sent to DataWedge
 [<Literal>] 
-let EXTRA_GET_VERSION_INFO = "com.symbol.datawedge.api.GET_VERSION_INFO";
+let EXTRA_GET_VERSION_INFO = "com.symbol.datawedge.api.GET_VERSION_INFO"
 
 // 6.3 API and up Extras received from DataWedge
 

@@ -21,15 +21,15 @@ module App =
 
     let initModel = { Barcode = None; Symbology = None; Count = 0 }
 
-    let init () = initModel, Cmd.none
+    let init () = initModel
 
     let update msg model =
         match msg with
-        | BarcodeUpdate (bc, sym) -> { model with  Barcode = Some bc; Symbology = Some sym; Count = model.Count+1}, Cmd.none
-        | Reset -> initModel, Cmd.none  
+        | BarcodeUpdate (bc, sym) -> { model with  Barcode = Some bc; Symbology = Some sym; Count = model.Count+1}
+        | Reset -> initModel
         | Inform -> let dwApi = DependencyService.Get<IDwApi.IDwApi>()
                     dwApi.GetDwProfile()
-                    model, Cmd.none
+                    model
 
     let view (model: Model) dispatch =
         Xaml.ContentPage(
@@ -47,8 +47,8 @@ module App =
                         , fontSize = "Large" )
                     Xaml.Label(text= "Count:", fontSize = "Large")
                     Xaml.Entry(text= string model.Count, fontSize = "Large" )
-                    Xaml.Button(text="Reset", command=fixf(fun () -> dispatch Reset))
-                    Xaml.Button(text="DW Version", command=fixf(fun () -> dispatch Inform))
+                    Xaml.Button(text="Reset Count", command=fixf(fun () -> dispatch Reset))
+                    Xaml.Button(text="DW Active Profile", command=fixf(fun () -> dispatch Inform))
                   ]))
 
 open App
@@ -61,7 +61,7 @@ type InventoryApp () as app =
         let newBarcodeAction dispatch = new System.Action<InventoryApp,string*string>(fun app arg -> dispatch (BarcodeUpdate arg) )
         MessagingCenter.Subscribe<InventoryApp, string*string> (Xamarin.Forms.Application.Current, "DataWedgeOutput", newBarcodeAction dispatch)
 
-    let program = Program.mkProgram init update view
+    let program = Program.mkSimple init update view
     let runner = 
         program
         |> Program.withSubscription (fun _ -> Cmd.ofSub dwOutput)
