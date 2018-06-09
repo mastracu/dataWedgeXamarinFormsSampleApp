@@ -6,6 +6,7 @@ open Xamarin.Forms
 
 
 module App = 
+    open Xamarin.Forms
 
     type Model = 
       { Barcode : string option
@@ -16,6 +17,7 @@ module App =
     type Msg = 
         | BarcodeUpdate of string * string
         | Reset
+        | Inform
 
     let initModel = { Barcode = None; Symbology = None; Count = 0 }
 
@@ -25,6 +27,9 @@ module App =
         match msg with
         | BarcodeUpdate (bc, sym) -> { model with  Barcode = Some bc; Symbology = Some sym; Count = model.Count+1}, Cmd.none
         | Reset -> initModel, Cmd.none  
+        | Inform -> let dwApi = DependencyService.Get<IDwApi.IDwApi>()
+                    dwApi.GetDwProfile()
+                    model, Cmd.none
 
     let view (model: Model) dispatch =
         Xaml.ContentPage(
@@ -32,17 +37,18 @@ module App =
                   children=[
                     Xaml.Label(text= "Scanned Barcode:", fontSize = "Large")
                     Xaml.Entry(text= match model.Barcode with 
-                                            | None -> ""
+                                            | None -> "<NONE>"
                                             | Some str -> str
                         ,fontSize = "Large" )
                     Xaml.Label(text= "Symbology:", fontSize = "Large")
                     Xaml.Entry(text= match model.Symbology with 
-                                            | None -> ""
+                                            | None -> "<NONE>"
                                             | Some str -> str
                         , fontSize = "Large" )
                     Xaml.Label(text= "Count:", fontSize = "Large")
                     Xaml.Entry(text= string model.Count, fontSize = "Large" )
                     Xaml.Button(text="Reset", command=fixf(fun () -> dispatch Reset))
+                    Xaml.Button(text="DW Version", command=fixf(fun () -> dispatch Inform))
                   ]))
 
 open App

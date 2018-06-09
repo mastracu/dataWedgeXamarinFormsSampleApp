@@ -5,6 +5,7 @@
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="IDWApi.fs" />
     <Compile Include="App.fs" />
     <Compile Include="AssemblyInfo.fs" />
   </ItemGroup>
