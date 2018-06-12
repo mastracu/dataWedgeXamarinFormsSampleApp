@@ -13,6 +13,7 @@ open DWLiterals
 
 type Resources = FsXamarinForms.Droid.Resource
 
+
 type bReceiver (func1, func2) = 
    inherit BroadcastReceiver()               
    override this.OnReceive (context, intent) =
@@ -25,13 +26,12 @@ type bReceiver (func1, func2) =
             let decodedLabelType = b.GetString EXTRA_LABEL_TYPE
             func1 (decodedSource, decodedData, decodedLabelType)
       | ACTION_RESULT_DATAWEDGE ->
-            if intent.HasExtra EXTRA_RESULT_GET_ACTIVE_PROFILE then
-                let activeProfile = b.GetString EXTRA_RESULT_GET_ACTIVE_PROFILE
-                func2 (activeProfile)
+            if intent.HasExtra EXTRA_RESULT_GET_VERSION_INFO then
+                let dwVersionInfo = b.GetBundle EXTRA_RESULT_GET_VERSION_INFO
+                let dwVersion = dwVersionInfo.GetString ("DATAWEDGE")
+                func2 dwVersion
             else
                 ()
-            // let dwVersionInfo = b.GetBundle EXTRA_RESULT_GET_VERSION_INFO
-            // let dwVersion = dwVersionInfo.GetString ("DATAWEDGE")
       | _ ->
             do ()
 
@@ -42,19 +42,16 @@ type MainActivity() =
     inherit FormsAppCompatActivity()
     let mutable barcodeBroadcastReceiver = Unchecked.defaultof<bReceiver>
 
-    member this.getActiveProfileIntent () =
+    member this.getBCReaderInfo () =
             let dw = new Intent ()
             do  dw.SetAction ACTION_DATAWEDGE |> ignore
-            do  dw.PutExtra (EXTRA_GET_ACTIVE_PROFILE, "") |> ignore
             do  dw.PutExtra (EXTRA_GET_VERSION_INFO, "") |> ignore
             do  this.SendBroadcast dw
 
-    member this.showActiveProfile (activeProfile) = 
-       this.RunOnUiThread( fun() -> 
-          let barcodeToast = (Android.Widget.Toast.MakeText(this, "Active DW Profile: " + activeProfile, 
-                                                                     Android.Widget.ToastLength.Long))
-          do barcodeToast.Show() )
-
+    member this.sendBCReaderInfo ver = 
+        this.RunOnUiThread (fun () -> MessagingCenter.Send<FsXamarinForms.InventoryApp, string>(
+                                        Xamarin.Forms.Application.Current :?> FsXamarinForms.InventoryApp, 
+                                        "BCReaderInfo", ver))
 
     member this.sendBarcodeNotification (_, b, c)  = 
         this.RunOnUiThread (fun () -> MessagingCenter.Send<FsXamarinForms.InventoryApp, string*string>(
@@ -68,9 +65,9 @@ type MainActivity() =
         base.OnCreate (bundle)        
         Xamarin.Forms.Forms.Init (this, bundle)
         this.LoadApplication (new FsXamarinForms.InventoryApp ())
-        do barcodeBroadcastReceiver <- new bReceiver( this.sendBarcodeNotification, this.showActiveProfile )
+        do barcodeBroadcastReceiver <- new bReceiver( this.sendBarcodeNotification, this.sendBCReaderInfo )
         let dwApi = DependencyService.Get<IDwApi.IDwApi>()
-        dwApi.ApiEvent.Add (this.getActiveProfileIntent)
+        dwApi.ApiEvent.Add (this.getBCReaderInfo)
 
     override this.OnStart () =
         base.OnStart ()
@@ -79,6 +76,7 @@ type MainActivity() =
         do filter.AddAction ACTION_RESULT_DATAWEDGE
         do filter.AddCategory "android.intent.category.DEFAULT"
         do this.RegisterReceiver (barcodeBroadcastReceiver, filter) |> ignore
+        do this.getBCReaderInfo()
 
     override this.OnStop () =
         base.OnStop ()        
