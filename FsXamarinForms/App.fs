@@ -13,35 +13,33 @@ module App =
       { Barcode : string option
         Symbology: string option
         Count: int
-        ReaderInfo: string option * string option
+        ReaderInfo: string * string * string
       }
-
-    type BCReaderInfo = 
-        | DWVersion of string
-        | DWProfile of string
 
     type Msg = 
         | BarcodeUpdate of string * string
         | Reset
-        | Inform
-        | DWMsg of BCReaderInfo 
+        | ReaderInfoUpdate of int * string
 
-    let initModel = { Barcode = None; Symbology = None; Count = 0; ReaderInfo = None,None }
+    let initModel = { Barcode = None; Symbology = None; Count = 0; ReaderInfo = ("","","") }
 
     let init () = initModel
 
     let update msg model =
         match msg with
         | BarcodeUpdate (bc, sym) -> { model with  Barcode = Some bc; Symbology = Some sym; Count = model.Count+1}
-        | Reset -> initModel
-        | Inform -> let dwApi = DependencyService.Get<IDwApi.IDwApi>()
-                    dwApi.GetDwProfile()
-                    model
-        | DWMsg msg -> match msg with
-                           | DWVersion ver -> { model with ReaderInfo = Some ver, snd model.ReaderInfo}
-                           | DWProfile profname -> { model with ReaderInfo = fst model.ReaderInfo, Some profname}
+        | Reset -> { model with Count = 0}
+        | ReaderInfoUpdate (pos, str) -> let (i1, i2, i3) = model.ReaderInfo
+                                         { model with ReaderInfo = match pos with 
+                                                                   |1 -> (str, i2, i3)
+                                                                   |2 -> (i1, str, i3)
+                                                                   |3 -> (i1, i2, str)
+                                                                   |_ -> (i1, i2, i3)}
 
     let view (model: Model) dispatch =
+        let fst3 (a, _, _) = a
+        let snd3 (_, b, _) = b
+        let thd3 (_, _, c) = c
         Xaml.ContentPage(
           content=Xaml.StackLayout(padding=20.0, spacing = 5.0,
                   children=[
@@ -58,10 +56,9 @@ module App =
                     Xaml.Label(text= "Count:", fontSize = "Large")
                     Xaml.Entry(text= string model.Count, fontSize = "Large" )
                     Xaml.Button(text="Reset Count", command=fixf(fun () -> dispatch Reset))
-                    // Xaml.Button(text="BCReader Info", command=fixf(fun () -> dispatch Inform))
-                    Xaml.Label(text= match fst model.ReaderInfo with
-                                     | None -> "No DW version available "
-                                     | Some str -> sprintf "DW Version: %s" str)
+                    Xaml.Label(text= fst3 model.ReaderInfo )
+                    Xaml.Label(text= snd3 model.ReaderInfo )
+                    Xaml.Label(text= thd3 model.ReaderInfo )
                   ]))
 
 open App
@@ -75,8 +72,10 @@ type InventoryApp () as app =
         MessagingCenter.Subscribe<InventoryApp, string*string> (Xamarin.Forms.Application.Current, "DataWedgeOutput", newBarcodeAction dispatch)
 
     let bcReaderInfo dispatch =
-        let newInfoAction dispatch = new System.Action<InventoryApp, string>(fun app arg -> dispatch (DWMsg (DWVersion arg)) )
-        MessagingCenter.Subscribe<InventoryApp, string> (Xamarin.Forms.Application.Current, "BCReaderInfo", newInfoAction dispatch)
+        for i in [1..3] do
+            let newInfoAction dispatch = new System.Action<InventoryApp, string>(fun app arg -> dispatch (ReaderInfoUpdate (i, arg)) )
+            MessagingCenter.Subscribe<InventoryApp, string> (Xamarin.Forms.Application.Current, "BCReaderInfo" + string i, newInfoAction dispatch)
+
 
     let program = Program.mkSimple init update view
     let runner = 
