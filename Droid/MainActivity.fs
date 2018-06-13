@@ -89,6 +89,7 @@ type MainActivity() =
                                                         this.send2App "BCReaderInfo1", 
                                                         this.send2App "BCReaderInfo2",
                                                         this.send2App "BCReaderInfo3")
+        this.send2App "BCReaderInfo3" "No Scanner Status update"
 
     override this.OnStart () =
         base.OnStart ()
