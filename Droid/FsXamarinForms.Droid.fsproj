@@ -18,7 +18,7 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
-    <SelectedDevice>Zebra Technologies TC20</SelectedDevice>
+    <SelectedDevice>Android_Accelerated_x86</SelectedDevice>
     <DefaultDevice>Android_Accelerated_x86</DefaultDevice>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
