@@ -1,6 +1,7 @@
 ﻿namespace FsXamarinForms.Droid
 
 open System
+open System.IO
 
 open Android.App
 open Android.Content
@@ -56,6 +57,7 @@ type DWBReceiver (notifyDecoding, notifyDWVer, notifyDWProfileName, notifyDWScan
  ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation), ScreenOrientation = ScreenOrientation.Portrait)>]
 type MainActivity() =
     inherit FormsAppCompatActivity()
+
     let mutable barcodeBroadcastReceiver = Unchecked.defaultof<DWBReceiver>
 
     member this.DWApiAction (actionType) =
@@ -81,6 +83,19 @@ type MainActivity() =
     override this.OnCreate (bundle: Bundle) =
         FormsAppCompatActivity.TabLayoutResource <- Resources.Layout.Tabbar
         FormsAppCompatActivity.ToolbarResource <- Resources.Layout.Toolbar
+        let Asset2DWAutoImport filename =
+            let path = "/enterprise/device/settings/datawedge/autoimport/"
+            let assets = this.Assets
+            let fromStream = assets.Open filename
+            // I create the file - RW for owner only, not visibile to DW
+            let toFileStream = File.Create (path + filename)
+            do fromStream.CopyTo toFileStream
+            do toFileStream.Close ()
+            do fromStream.Close ()
+            // once it is copied, I give RW access for DW to process it and then remove it.  
+            let javaFile =  new Java.IO.File (path + filename)
+            do javaFile.SetWritable (true,false) |> ignore
+            do javaFile.SetReadable (true,false) |> ignore
 
         base.OnCreate (bundle)        
         Xamarin.Forms.Forms.Init (this, bundle)
@@ -90,6 +105,7 @@ type MainActivity() =
                                                         this.send2App "BCReaderInfo2",
                                                         this.send2App "BCReaderInfo3")
         this.send2App "BCReaderInfo3" "No Scanner Status update"
+        do Asset2DWAutoImport "dwprofile_F#Inventory.db"
 
     override this.OnStart () =
         base.OnStart ()
