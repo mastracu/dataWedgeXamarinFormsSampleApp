@@ -61,8 +61,11 @@ module App =
                     View.Label(text= thd3 model.ReaderInfo )
                   ]))
 
-open App
 
+
+    let program = Program.mkSimple init update view
+
+open App
 
 type InventoryApp () as app = 
     inherit Application ()
@@ -76,11 +79,12 @@ type InventoryApp () as app =
             let newInfoAction dispatch = new System.Action<InventoryApp, string>(fun app arg -> dispatch (ReaderInfoUpdate (i, arg)) )
             MessagingCenter.Subscribe<InventoryApp, string> (Xamarin.Forms.Application.Current, "BCReaderInfo" + string i, newInfoAction dispatch)
 
-
-    let program = Program.mkSimple init update view
     let runner = 
         program
         |> Program.withSubscription (fun _ -> Cmd.ofSub dwOutput)
         |> Program.withSubscription (fun _ -> Cmd.ofSub bcReaderInfo)
         |> Program.withConsoleTrace
         |> Program.runWithDynamicView app
+
+    // https://fsprojects.github.io/Elmish.XamarinForms/tools.html
+    do runner.EnableLiveUpdate()

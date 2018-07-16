@@ -1,0 +1,1 @@
+C:\users\vhrd47\.nuget\packages\elmish.xamarinforms.liveupdate\0.14.6\tools\fscd.exe --watch --webhook:http://localhost:9867/update
