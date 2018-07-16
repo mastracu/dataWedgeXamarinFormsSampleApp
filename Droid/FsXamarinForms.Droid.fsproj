@@ -18,7 +18,7 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
-    <SelectedDevice>Android_Accelerated_x86</SelectedDevice>
+    <SelectedDevice>Zebra Technologies TC56</SelectedDevice>
     <DefaultDevice>Android_Accelerated_x86</DefaultDevice>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -82,13 +82,13 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Elmish.XamarinForms">
-      <HintPath>..\packages\Elmish.XamarinForms.0.4.4\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
+      <HintPath>..\packages\Elmish.XamarinForms.0.14.6\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
     </Reference>
     <Reference Include="FormsViewGroup">
       <HintPath>..\packages\Xamarin.Forms.3.1.0.469394-pre1\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>..\packages\FSharp.Core.4.3.4\lib\netstandard1.6\FSharp.Core.dll</HintPath>
+      <HintPath>..\packages\FSharp.Core.4.5.0\lib\netstandard1.6\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />

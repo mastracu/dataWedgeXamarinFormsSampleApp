@@ -40,25 +40,25 @@ module App =
         let fst3 (a, _, _) = a
         let snd3 (_, b, _) = b
         let thd3 (_, _, c) = c
-        Xaml.ContentPage(
-          content=Xaml.StackLayout(padding=20.0, spacing = 5.0,
+        View.ContentPage(
+          content=View.StackLayout(padding=20.0, spacing = 5.0,
                   children=[
-                    Xaml.Label(text= "Scanned Barcode:", fontSize = "Large")
-                    Xaml.Entry(text= match model.Barcode with 
+                    View.Label(text= "Scanned Barcode:", fontSize = "Large")
+                    View.Entry(text= match model.Barcode with 
                                             | None -> "<NONE>"
                                             | Some str -> str
                         ,fontSize = "Large" )
-                    Xaml.Label(text= "Symbology:", fontSize = "Large")
-                    Xaml.Entry(text= match model.Symbology with 
+                    View.Label(text= "Symbology:", fontSize = "Large")
+                    View.Entry(text= match model.Symbology with 
                                             | None -> "<NONE>"
                                             | Some str -> str
                         , fontSize = "Large" )
-                    Xaml.Label(text= "Count:", fontSize = "Large")
-                    Xaml.Entry(text= string model.Count, fontSize = "Large" )
-                    Xaml.Button(text="Reset Count", command=fixf(fun () -> dispatch Reset))
-                    Xaml.Label(text= fst3 model.ReaderInfo )
-                    Xaml.Label(text= snd3 model.ReaderInfo )
-                    Xaml.Label(text= thd3 model.ReaderInfo )
+                    View.Label(text= "Count:", fontSize = "Large")
+                    View.Entry(text= string model.Count, fontSize = "Large" )
+                    View.Button(text="Reset Count", command=fixf(fun () -> dispatch Reset))
+                    View.Label(text= fst3 model.ReaderInfo )
+                    View.Label(text= snd3 model.ReaderInfo )
+                    View.Label(text= thd3 model.ReaderInfo )
                   ]))
 
 open App
@@ -83,5 +83,4 @@ type InventoryApp () as app =
         |> Program.withSubscription (fun _ -> Cmd.ofSub dwOutput)
         |> Program.withSubscription (fun _ -> Cmd.ofSub bcReaderInfo)
         |> Program.withConsoleTrace
-        |> Program.withDynamicView app
-        |> Program.run
+        |> Program.runWithDynamicView app
