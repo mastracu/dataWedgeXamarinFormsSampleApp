@@ -1,0 +1,1 @@
+adb.exe -d forward tcp:9867 tcp:9867

@@ -43,7 +43,7 @@ module App =
         View.ContentPage(
           content=View.StackLayout(padding=20.0, spacing = 5.0,
                   children=[
-                    View.Label(text= "Scanned Barcode:", fontSize = "Large")
+                    View.Label(text= "Last Scan:", fontSize = "Large")
                     View.Entry(text= match model.Barcode with 
                                             | None -> "<NONE>"
                                             | Some str -> str
@@ -55,7 +55,7 @@ module App =
                         , fontSize = "Large" )
                     View.Label(text= "Count:", fontSize = "Large")
                     View.Entry(text= string model.Count, fontSize = "Large" )
-                    View.Button(text="Reset Count", command=fixf(fun () -> dispatch Reset))
+                    View.Button(text="Reset Count", textColor=Color.Red, command=fixf(fun () -> dispatch Reset))
                     View.Label(text= fst3 model.ReaderInfo )
                     View.Label(text= snd3 model.ReaderInfo )
                     View.Label(text= thd3 model.ReaderInfo )
